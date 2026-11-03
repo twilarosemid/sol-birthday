@@ -267,10 +267,11 @@ export default function App() {
     setStatus("Couldn’t send. Please copy your message and send it to me.");
   };
 
-  // Option 2: Instagram. This is a real link (so it is never popup-blocked); the tap also copies her message.
-  const sendIG = (e) => {
+  // Option 2: Instagram. A real link (never popup-blocked) that always opens your chat.
+  // If she already typed something, the tap also copies it so she can paste it in.
+  const sendIG = () => {
     const t = reply.trim();
-    if (!t) { e.preventDefault(); setStatus("Write something first, or tap Skip."); return; }
+    if (!t) { setStatus("Opening Instagram…"); return; }
     copyText(t).then((ok) => finish(ok ? "Copied! Paste it into our chat. I’ll act surprised." : "Chat opened. Type or paste your message there.", 3500));
   };
 
@@ -322,7 +323,7 @@ export default function App() {
               {IG_URL && <a className="again" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={sendIG}>Message on Instagram</a>}
               <button className="again" onClick={closeCard}>Skip</button>
             </div>
-            {IG_URL && <p className="note">Email goes straight to {FROM}. On Instagram, your message is copied so you can paste it into the chat.</p>}
+            {IG_URL && <p className="note">Email goes straight to {FROM}. If you typed a message, the Instagram button copies it so you can paste it into the chat.</p>}
           </div>
         </div>
       </section>
