@@ -6,10 +6,7 @@ import { useMusic } from "./music";
 import Recap from "./recap";
 
 const { NAME, FROM, MESSAGE, BIRTHDAY } = cfg;
-const REPLY_ENDPOINT = cfg.REPLY_ENDPOINT ?? "";
-const REPLY_EMAIL = cfg.REPLY_EMAIL ?? "";
 const REPLY_IG = cfg.REPLY_IG ?? "";
-const USE_FORMSUBMIT = cfg.USE_FORMSUBMIT ?? true;
 const IG_URL = REPLY_IG ? `https://ig.me/m/${REPLY_IG}` : "";
 
 // Copy text to the clipboard (with an old-browser fallback). Resolves true/false.
@@ -166,7 +163,6 @@ export default function App() {
   const [reply, setReply] = useState("");
   const [status, setStatus] = useState("");
   const [sent, setSent] = useState(false);
-  const [busy, setBusy] = useState(false);
   const [hi, setHi] = useState(0);
   const [bubble, setBubble] = useState(null);
   const [harassed, setHarassed] = useState(0);
@@ -236,38 +232,7 @@ export default function App() {
 
   const finish = (msg, delay = 1800) => { setSent(true); setStatus(msg); setTimeout(closeCard, delay); };
 
-  // Option 1: email. Sends straight from the page; if that fails, hands her to her mail app.
-  const sendEmail = async () => {
-    const t = reply.trim();
-    if (!t) { setStatus("Write something first, or tap Skip."); return; }
-    setBusy(true);
-    setStatus("Sending…");
-    const url = REPLY_ENDPOINT || (USE_FORMSUBMIT && REPLY_EMAIL ? `https://formsubmit.co/ajax/${REPLY_EMAIL}` : "");
-    try {
-      if (url) {
-        const res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ message: t, from: NAME, _subject: `Re: Happy Birthday (a reply from ${NAME})`, _captcha: "false", _template: "box" }),
-        });
-        let ok = res.ok;
-        if (ok && !REPLY_ENDPOINT) { const d = await res.json().catch(() => null); if (d && String(d.success) === "false") ok = false; }
-        if (ok) { setBusy(false); return finish("Delivered. No take-backs."); }
-      }
-    } catch { /* fall through to the fallbacks */ }
-    setBusy(false);
-    if (REPLY_EMAIL) {
-      window.location.href = `mailto:${REPLY_EMAIL}?subject=${encodeURIComponent("Re: Happy Birthday")}&body=${encodeURIComponent(t)}`;
-      return finish("Opening your mail app. Just hit send there.", 3500);
-    }
-    try {
-      if (navigator.share) { await navigator.share({ text: t }); return finish("Delivered. No take-backs."); }
-    } catch { /* ignore */ }
-    if (await copyText(t)) return finish("Copied. Paste it into a message to me. I’ll act surprised.", 3000);
-    setStatus("Couldn’t send. Please copy your message and send it to me.");
-  };
-
-  // Option 2: Instagram. A real link (never popup-blocked) that always opens your chat.
+  // Instagram reply. A real link (never popup-blocked) that always opens your chat.
   // If she already typed something, the tap also copies it so she can paste it in.
   const sendIG = () => {
     const t = reply.trim();
@@ -319,11 +284,10 @@ export default function App() {
             <textarea maxLength={600} placeholder="Roast me, thank me, or anything in between" value={reply} onChange={(e) => setReply(e.target.value)} autoFocus={replying} />
             <p className="err" role="status">{status}</p>
             <div className="btns opts">
-              <button className="again solid" onClick={sendEmail} disabled={busy}>{REPLY_EMAIL || REPLY_ENDPOINT ? "Send to email" : "Send it"}</button>
-              {IG_URL && <a className="again" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={sendIG}>Message on Instagram</a>}
+              {IG_URL && <a className="again solid" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={sendIG}>Message me on Instagram</a>}
               <button className="again" onClick={closeCard}>Skip</button>
             </div>
-            {IG_URL && <p className="note">Email goes straight to {FROM}. If you typed a message, the Instagram button copies it so you can paste it into the chat.</p>}
+            {IG_URL && <p className="note">If you type a message, it gets copied so you can paste it into our chat.</p>}
           </div>
         </div>
       </section>

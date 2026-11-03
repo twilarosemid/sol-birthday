@@ -7,20 +7,9 @@ export const MESSAGE =
 // The question that unlocks the letter
 export const BIRTHDAY = { day: 4, month: 11, year: 2006 };
 
-// Where her reply goes. She gets two choices under the text box:
-//  1) "Send to email"      -> delivered to REPLY_EMAIL
-//  2) "Message on Instagram" -> her message is copied, then your IG chat opens (ig.me/m/REPLY_IG)
-export const REPLY_EMAIL = "gulfericdonato7@gmail.com";
+// Her reply: the button under the text box opens your Instagram chat (ig.me/m/REPLY_IG).
+// If she typed a message first, it is copied so she can paste it in.
 export const REPLY_IG = "euno.fxd";
-
-// Email delivery:
-// - USE_FORMSUBMIT = true  -> sends straight from the page via the free FormSubmit.co service (no mail app needed).
-//     ONE-TIME SETUP: send yourself a test reply once, then click the "Activate" link FormSubmit emails to REPLY_EMAIL.
-//     If the send ever fails, she is automatically handed to her mail app (mailto) instead.
-// - USE_FORMSUBMIT = false -> always opens her mail app with the message addressed to you.
-// - REPLY_ENDPOINT (optional) -> your own form service URL (Formspree, Getform...). Overrides FormSubmit if filled in.
-export const USE_FORMSUBMIT = true;
-export const REPLY_ENDPOINT = "";
 export const MUSIC_URL = "/song.mp3";
 
 // ---------- The replay (photo recap) ----------
