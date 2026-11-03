@@ -106,7 +106,7 @@ export default function Recap({ show, onClose }) {
                 ))}
               </div>
               <h2 className="big">Happy birthday, {NAME}</h2>
-              <p className="rcap">Thank you for the good memories.</p>
+              <p className="rcap">I sincerely thank you, for everything we've had.</p>
               <div className="btns">
                 <button className="again solid" onClick={again}>Watch again</button>
                 <button className="again" onClick={onClose}>Back to the letter</button>

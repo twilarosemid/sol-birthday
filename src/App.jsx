@@ -10,7 +10,7 @@ const REPLY_IG = cfg.REPLY_IG ?? "";
 const IG_URL = REPLY_IG ? `https://ig.me/m/${REPLY_IG}` : "";
 
 // Optional: add `export const PS = "..."` to config.js to change this
-const PS = cfg.PS ?? "P.S. Please don’t make a wish out loud. It’s bad luck, and I’m not a genie.";
+const PS = cfg.PS ?? "P.S Don't take everything from here to the heart, just wanted to make you smile hehe.";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const MAX = 70; // how far the envelope can be pulled from the center
@@ -198,7 +198,7 @@ export default function App() {
     if (!showCard) return;
     let i = 0;
     setTyped("");
-    const t = setInterval(() => { i++; setTyped(MESSAGE.slice(0, i)); if (i >= MESSAGE.length) clearInterval(t); }, 28);
+    const t = setInterval(() => { i++; setTyped(MESSAGE.slice(0, i)); if (i >= MESSAGE.length) clearInterval(t); }, 15);
     return () => clearInterval(t);
   }, [showCard]);
 
