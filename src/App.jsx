@@ -4,6 +4,7 @@ import { Garden, Burst } from "./flowers";
 import { Sky, Butterflies } from "./ambient";
 import { useMusic } from "./music";
 import Recap from "./recap";
+import Bouquet from "./bouquet";
 
 const { NAME, FROM, MESSAGE, BIRTHDAY } = cfg;
 const REPLY_IG = cfg.REPLY_IG ?? "";
@@ -241,8 +242,9 @@ export default function App() {
         <div className={`paper${replying ? " replying" : ""}`}>
           <h1>Happy Birthday, {NAME}</h1>
           <p className="msg">{typed}</p>
-          <p className="sign">— {FROM}</p>
+          <p className="sign">— Yours truly, {FROM}</p>
           {typed.length >= MESSAGE.length && <p className="ps">{PS}</p>}
+          {typed.length >= MESSAGE.length && <Bouquet />}
           <div className="btns pre">
             <button className="again solid" onClick={() => setRecap(true)}>Replay our memories</button>
             <button className="again" onClick={() => setReplying(true)}>Fold it back up</button>

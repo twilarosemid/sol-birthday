@@ -11,7 +11,9 @@ import { Burst } from "./flowers";
   Slides = intro + one per memory (see MEMORIES in config.js) + outro.
 */
 const INTRO_SECONDS = 4;
-const SLIDES = [{ kind: "intro" }, ...MEMORIES.map((m) => ({ kind: "photo", ...m })), { kind: "outro" }];
+const isVideo = (src) => /\.(mp4|webm|m4v|mov)(\?|$)/i.test(src);
+const SLIDES = [{ kind: "intro" }, ...MEMORIES.map((m) => ({ kind: "photo", video: isVideo(m.src), ...m })), { kind: "outro" }];
+const FAN = MEMORIES.filter((m) => !isVideo(m.src)); // the closing photo fan only shows photos
 const LAST = SLIDES.length - 1;
 
 const Icon = ({ d, fill }) => (
@@ -25,6 +27,8 @@ export default function Recap({ show, onClose }) {
   const [ever, setEver] = useState(false);
   const hold = useRef({ t: 0, held: false });
   const closeBtn = useRef(null);
+  const vids = useRef({});            // slide index -> <video>
+  const [dur, setDur] = useState({}); // slide index -> video length in seconds
 
   // start from the top every time it opens (and only load the photos once it's first opened).
   // Layout effect = runs before paint, so the last slide never flashes on re-open.
@@ -33,6 +37,20 @@ export default function Recap({ show, onClose }) {
     setEver(true); setI(0); setPaused(false); setRun((n) => n + 1);
   }, [show]);
   useEffect(() => { if (show) closeBtn.current?.focus({ preventScroll: true }); }, [show, ever]);
+
+  // videos: restart when their slide comes up, play only while visible and not paused
+  useEffect(() => {
+    const v = vids.current[i];
+    if (show && v) { try { v.currentTime = 0; } catch {} }
+  }, [i, run, show]);
+  useEffect(() => {
+    SLIDES.forEach((_, n) => {
+      const v = vids.current[n];
+      if (!v) return;
+      if (show && n === i && !paused) v.play().catch(() => {});
+      else v.pause();
+    });
+  }, [show, i, paused, run, ever]);
 
   const next = useCallback(() => setI((n) => Math.min(n + 1, LAST)), []);
   const prev = useCallback(() => { setI((n) => Math.max(n - 1, 0)); setRun((n) => n + 1); }, []);
@@ -66,18 +84,36 @@ export default function Recap({ show, onClose }) {
   const again = () => { setI(0); setPaused(false); setRun((n) => n + 1); };
 
   if (!ever) return null;
-  const seconds = (n) => (SLIDES[n].kind === "intro" ? INTRO_SECONDS : RECAP_SECONDS);
+  // a video slide lasts as long as the video (or its `seconds` in config.js)
+  const seconds = (n) => {
+    const s = SLIDES[n];
+    if (s.kind === "intro") return INTRO_SECONDS;
+    if (s.video) return s.seconds ?? (dur[n] ? dur[n] + 0.3 : RECAP_SECONDS);
+    return RECAP_SECONDS;
+  };
 
   return (
     <section className={`recap${show ? " show" : ""}${paused ? " paused" : ""}`} role="dialog" aria-label="Photo replay" aria-hidden={!show}>
       {SLIDES.map((s, n) => (
-        <div key={n} className={`rs ${s.kind}${n === i ? " on" : ""}`} aria-hidden={n !== i}>
+        <div key={n} className={`rs ${s.kind}${s.video ? " vid" : ""}${n === i ? " on" : ""}`} aria-hidden={n !== i}>
           {s.kind === "photo" && (
             <>
-              <img className="rbg" src={asset(s.src)} alt="" aria-hidden="true" draggable={false} />
+              {!s.video && <img className="rbg" src={asset(s.src)} alt="" aria-hidden="true" draggable={false} />}
               <div className="rbody">
                 <figure className={`rframe${s.small ? " small" : ""}`} style={{ "--rot": `${n % 2 ? 2.2 : -2.2}deg` }}>
-                  <img src={asset(s.src)} alt={`${s.title}. ${s.caption}`} draggable={false} />
+                  {s.video ? (
+                    <video
+                      ref={(el) => { vids.current[n] = el; }}
+                      src={asset(s.src)}
+                      muted={!s.sound}
+                      playsInline
+                      preload="metadata"
+                      aria-label={`${s.title}. ${s.caption}`}
+                      onLoadedMetadata={(e) => { const d = e.currentTarget.duration; if (Number.isFinite(d)) setDur((o) => ({ ...o, [n]: d })); }}
+                    />
+                  ) : (
+                    <img src={asset(s.src)} alt={`${s.title}. ${s.caption}`} draggable={false} />
+                  )}
                 </figure>
                 <div className="rtext">
                   {s.date && <p className="rdate">{s.date}</p>}
@@ -101,8 +137,8 @@ export default function Recap({ show, onClose }) {
             <div className="rbody center">
               {n === i && <Burst key={run} origin={{ x: innerWidth / 2, y: innerHeight * 0.36 }} />}
               <div className="rfan" aria-hidden="true">
-                {MEMORIES.map((m, k) => (
-                  <img key={k} src={asset(m.src)} alt="" draggable={false} style={{ "--k": k - (MEMORIES.length - 1) / 2 }} />
+                {FAN.map((m, k) => (
+                  <img key={k} src={asset(m.src)} alt="" draggable={false} style={{ "--k": k - (FAN.length - 1) / 2 }} />
                 ))}
               </div>
               <h2 className="big">Happy birthday, {NAME}</h2>

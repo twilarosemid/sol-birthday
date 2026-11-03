@@ -32,6 +32,12 @@ export const MEMORIES = [
     caption: "Eggs and childrens we planned to raise that we later abandoned kasi tinamad" },
   { src: "memories/06-cracked-phone.jpg", title: "First meeting, first photo, first day",
     caption: "Photos we first took on our first meeting" },
-  { src: "memories/07-three-phones.jpg", date: "Sun, May 24 · 8:48", title: "Three phones, one photo",
+  { src: "memories/07-three-phones.jpg", date: "Sunday, May 24 · 8:48", title: "Three phones, one photo",
     caption: "two down, last man standing" },
+  { src: "memories/08-first-date.jpg", date: "Saturday, March 20 · ", title: "Our backs against the burden of the world",
+    caption: "You and I, until the end of dawn" },
+  { src: "memories/09-last-date.mp4", date: "Sunday, June 27 · ", title: "Who knew this would be our last?",
+    caption: "One night we shared filled with memories so precious I can't ever forget" },
+  { src: "memories/10-flowers.mp4", title: "Flowers that don't wither",
+    caption: "Real flowers fade. These stay." },
 ];

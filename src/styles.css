@@ -167,3 +167,23 @@ textarea{width:100%;min-height:120px;margin-top:18px;resize:vertical;font-family
 a.again{display:inline-flex;align-items:center;line-height:normal;text-decoration:none}
 .again:disabled{opacity:.55;cursor:wait}
 .note{margin-top:14px;font:300 .8rem 'Outfit',sans-serif;color:var(--deep);opacity:.75}
+
+/* ---- bouquet ---- */
+.bouquet{margin:22px auto 0;display:flex;flex-direction:column;align-items:center;animation:hfade .8s}
+.bq{position:relative;display:block;padding:0;border:0;background:none;cursor:pointer;max-width:100%;transform-origin:50% 92%;animation:bqsway 5.5s ease-in-out infinite alternate;-webkit-tap-highlight-color:transparent}
+.bq:focus-visible{outline:3px solid var(--mid);outline-offset:4px;border-radius:12px}
+.bq-art{position:absolute;inset:0;display:block;overflow:visible}
+.bq-head{position:absolute;display:block;opacity:0;transform:scale(0) rotate(-40deg);animation:bqbloom 1s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(.15s + var(--i) * .12s)}
+.bq-head img{display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.bq.pop .bq-head{animation:bqpop .7s cubic-bezier(.2,1.6,.4,1) both;animation-delay:calc(var(--i) * .04s)}
+@keyframes bqbloom{to{opacity:1;transform:scale(1) rotate(var(--s))}}
+@keyframes bqpop{0%{opacity:1;transform:scale(1) rotate(var(--s))}40%{opacity:1;transform:scale(1.22) rotate(calc(var(--s) * -2))}100%{opacity:1;transform:scale(1) rotate(var(--s))}}
+@keyframes bqsway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.bouquet figcaption{margin-top:8px;font:italic 300 .95rem 'Fraunces',serif;color:var(--deep);opacity:.85}
+.replying .bouquet{display:none}
+@media (max-width:360px){.bq{scale:.85}}
+@media (prefers-reduced-motion:reduce){.bq{animation:none}.bq-head{animation:none!important;opacity:1;transform:rotate(var(--s))}}
+
+/* video memories */
+.rframe video{display:block;max-width:min(78vw,400px);max-height:54vh;max-height:min(56dvh,620px);width:auto;height:auto;border-radius:2px;background:#000}
+.rs.photo.vid{background:linear-gradient(180deg,var(--navy) 0%,var(--deep) 100%)}
