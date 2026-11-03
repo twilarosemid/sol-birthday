@@ -248,7 +248,7 @@ export default function App() {
             <button className="again" onClick={() => setReplying(true)}>Fold it back up</button>
           </div>
           <div id="reply">
-            <p className="msg ask" style={{ minHeight: 0, textAlign: "center" }}>Before you go, want to say something back? Come find me on Instagram.</p>
+            <p className="msg ask" style={{ minHeight: 0, textAlign: "center" }}>Before you go, want to say something back? Message me on Instagram.</p>
             <div className="btns opts">
               {IG_URL && <a className="again solid" href={IG_URL} target="_blank" rel="noopener noreferrer">Message me on Instagram</a>}
               <button className="again" onClick={closeCard}>Close</button>
