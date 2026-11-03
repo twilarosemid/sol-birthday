@@ -9,18 +9,6 @@ const { NAME, FROM, MESSAGE, BIRTHDAY } = cfg;
 const REPLY_IG = cfg.REPLY_IG ?? "";
 const IG_URL = REPLY_IG ? `https://ig.me/m/${REPLY_IG}` : "";
 
-// Copy text to the clipboard (with an old-browser fallback). Resolves true/false.
-const copyText = async (t) => {
-  try { await navigator.clipboard.writeText(t); return true; } catch { /* try the fallback */ }
-  try {
-    const a = document.createElement("textarea");
-    a.value = t; a.style.cssText = "position:fixed;opacity:0";
-    document.body.appendChild(a); a.select();
-    const ok = document.execCommand("copy");
-    a.remove();
-    return ok;
-  } catch { return false; }
-};
 // Optional: add `export const PS = "..."` to config.js to change this
 const PS = cfg.PS ?? "P.S. Please don’t make a wish out loud. It’s bad luck, and I’m not a genie.";
 
@@ -160,9 +148,6 @@ export default function App() {
   const [replying, setReplying] = useState(false);
   const [typed, setTyped] = useState("");
   const [burst, setBurst] = useState(null);
-  const [reply, setReply] = useState("");
-  const [status, setStatus] = useState("");
-  const [sent, setSent] = useState(false);
   const [hi, setHi] = useState(0);
   const [bubble, setBubble] = useState(null);
   const [harassed, setHarassed] = useState(0);
@@ -217,27 +202,10 @@ export default function App() {
     return () => clearInterval(t);
   }, [showCard]);
 
-  // warn before leaving with an unsent reply
-  useEffect(() => {
-    const h = (e) => { if (reply.trim() && !sent) { e.preventDefault(); e.returnValue = ""; } };
-    addEventListener("beforeunload", h);
-    return () => removeEventListener("beforeunload", h);
-  }, [reply, sent]);
-
   // paper tucks in first, then the flap closes (see CSS delays)
   const closeCard = () => {
     setShowCard(false);
     setTimeout(() => { setReplying(false); setOpen(false); }, 600);
-  };
-
-  const finish = (msg, delay = 1800) => { setSent(true); setStatus(msg); setTimeout(closeCard, delay); };
-
-  // Instagram reply. A real link (never popup-blocked) that always opens your chat.
-  // If she already typed something, the tap also copies it so she can paste it in.
-  const sendIG = () => {
-    const t = reply.trim();
-    if (!t) { setStatus("Opening Instagram…"); return; }
-    copyText(t).then((ok) => finish(ok ? "Copied! Paste it into our chat. I’ll act surprised." : "Chat opened. Type or paste your message there.", 3500));
   };
 
   const bx = bubble ? Math.min(Math.max(bubble.x, 100), innerWidth - 100) : 0;
@@ -280,14 +248,11 @@ export default function App() {
             <button className="again" onClick={() => setReplying(true)}>Fold it back up</button>
           </div>
           <div id="reply">
-            <p className="msg ask" style={{ minHeight: 0, textAlign: "center" }}>Before you go, want to leave me a message? No pressure, but the text box gets lonely.</p>
-            <textarea maxLength={600} placeholder="Roast me, thank me, or anything in between" value={reply} onChange={(e) => setReply(e.target.value)} autoFocus={replying} />
-            <p className="err" role="status">{status}</p>
+            <p className="msg ask" style={{ minHeight: 0, textAlign: "center" }}>Before you go, want to say something back? Come find me on Instagram.</p>
             <div className="btns opts">
-              {IG_URL && <a className="again solid" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={sendIG}>Message me on Instagram</a>}
-              <button className="again" onClick={closeCard}>Skip</button>
+              {IG_URL && <a className="again solid" href={IG_URL} target="_blank" rel="noopener noreferrer">Message me on Instagram</a>}
+              <button className="again" onClick={closeCard}>Close</button>
             </div>
-            {IG_URL && <p className="note">If you type a message, it gets copied so you can paste it into our chat.</p>}
           </div>
         </div>
       </section>

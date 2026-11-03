@@ -7,8 +7,7 @@ export const MESSAGE =
 // The question that unlocks the letter
 export const BIRTHDAY = { day: 4, month: 11, year: 2006 };
 
-// Her reply: the button under the text box opens your Instagram chat (ig.me/m/REPLY_IG).
-// If she typed a message first, it is copied so she can paste it in.
+// The reply button at the end of the letter opens your Instagram chat (ig.me/m/REPLY_IG).
 export const REPLY_IG = "euno.fxd";
 export const MUSIC_URL = "/song.mp3";
 
